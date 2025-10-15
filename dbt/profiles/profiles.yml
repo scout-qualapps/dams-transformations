@@ -1,0 +1,13 @@
+test:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}" # e.g. ab12345.us-west-2
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'DEVELOPER') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEV_WH') }}"
+      database: "{{ env_var('SNOWFLAKE_DATABASE', 'DEV_DB') }}"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA', 'DEV_SCHEMA') }}"
+      threads: 4
