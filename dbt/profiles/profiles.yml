@@ -3,11 +3,15 @@ test:
   outputs:
     dev:
       type: snowflake
-      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}" # e.g. ab12345.us-west-2
-      user: "{{ env_var('SNOWFLAKE_USER') }}"
-      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
-      role: "{{ env_var('SNOWFLAKE_ROLE', 'DEVELOPER') }}"
-      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'DEV_WH') }}"
-      database: "{{ env_var('SNOWFLAKE_DATABASE', 'DEV_DB') }}"
-      schema: "{{ env_var('SNOWFLAKE_SCHEMA', 'DEV_SCHEMA') }}"
+      account: "jzfwccp-nf75387"
+      user: "airbyte_user"
+      password: "R1cSc4&cC1qmaUmY"
+      role: "AIRBYTE_ROLE"
+      warehouse: "PRODUCTS_WH"
+      database: "CAROL_RAW"
+      schema: "RAW"
       threads: 4
+      client_session_keep_alive: False
+      query_tag: dbt
+      connect_retries: 0 # default 0
+      connect_timeout: 3 # default: 10
