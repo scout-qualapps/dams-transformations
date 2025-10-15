@@ -1,0 +1,52 @@
+name: Build DBT image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "dbt/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::771225398400:role/ada-qual-gh-action
+          aws-region: us-east-1
+          role-session-name: GitHubActionsECRSession
+
+      - name: Log in to AWS ECR Public
+        run: |
+          aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 771225398400.dkr.ecr.us-west-2.amazonaws.com
+
+      - name: Generate Docker Tag
+        id: generate_tag
+        run: |
+          TAG=$(echo "${GITHUB_SHA:0:7}")
+          echo "TAG=${TAG}" >> $GITHUB_OUTPUT
+          echo "Generated tag: ${TAG}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ada/qual/dbt-test:dams_transformations .
+
+      - name: Tag Docker image for ECR Public
+        run: |
+          docker tag ada/qual/dbt-test:dams_transformations 771225398400.dkr.ecr.us-west-2.amazonaws.com/ada/qual/dbt-test:dams_transformations
+
+      - name: Push Docker image to ECR Public
+        run: |
+          docker push 771225398400.dkr.ecr.us-west-2.amazonaws.com/ada/qual/dbt-test:dams_transformations
